@@ -183,11 +183,11 @@ loginForm.addEventListener('submit', async function (e) {
             localStorage.setItem('loginAttempts', '0');
             localStorage.removeItem('lockoutTime');
 
-            // Dashboard ga yo'naltirish - joriy sahifada
+            // Yangi saytga yo'naltirish
             clearError();
 
-            // Joriy sahifada ochish
-            window.location.href = '/dashboard.html';
+            // Asosiy saytga o'tish
+            window.location.href = '/main-site.html';
         } else {
             // Noto'g'ri login
             loginAttempts++;
