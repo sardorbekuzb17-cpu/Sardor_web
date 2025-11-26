@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
     }
 
     try {
-        const { username, password, captcha } = JSON.parse(event.body);
+        const { username, password } = JSON.parse(event.body);
         const clientIp = event.headers['x-forwarded-for'] || event.headers['client-ip'];
 
         // Rate limiting
@@ -50,25 +50,12 @@ exports.handler = async (event, context) => {
         }
 
         // Input validatsiya
-        if (!username || !password || !captcha) {
+        if (!username || !password) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({
                     success: false,
                     message: 'Barcha maydonlarni to\'ldiring'
-                })
-            };
-        }
-
-        // CAPTCHA tekshirish
-        const savedCaptcha = getCookie(event.headers.cookie, 'captcha');
-        if (captcha !== savedCaptcha) {
-            loginAttempts.set(clientIp, { count: attempts.count + 1, timestamp: Date.now() });
-            return {
-                statusCode: 400,
-                body: JSON.stringify({
-                    success: false,
-                    message: 'CAPTCHA noto\'g\'ri'
                 })
             };
         }

@@ -58,13 +58,7 @@ const users = [
     }
 ];
 
-// CAPTCHA sessiyada saqlash
-app.get('/api/captcha', (req, res) => {
-    const captcha = generateCaptcha(6);
-    req.session.captcha = captcha;
-    console.log('CAPTCHA yaratildi:', captcha);
-    res.json({ captcha });
-});
+
 
 // Login endpoint
 app.post('/api/login', loginLimiter, async (req, res) => {
@@ -72,18 +66,10 @@ app.post('/api/login', loginLimiter, async (req, res) => {
         const { username, password, captcha } = req.body;
 
         // Input validatsiya
-        if (!username || !password || !captcha) {
+        if (!username || !password) {
             return res.status(400).json({
                 success: false,
                 message: 'Barcha maydonlarni to\'ldiring'
-            });
-        }
-
-        // CAPTCHA tekshirish
-        if (captcha !== req.session.captcha) {
-            return res.status(400).json({
-                success: false,
-                message: 'CAPTCHA noto\'g\'ri'
             });
         }
 
@@ -122,9 +108,6 @@ app.post('/api/login', loginLimiter, async (req, res) => {
         req.session.userId = user.id;
         req.session.username = user.username;
         req.session.loginTime = Date.now();
-
-        // Yangi CAPTCHA yaratish
-        delete req.session.captcha;
 
         res.json({
             success: true,
@@ -228,16 +211,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// CAPTCHA yaratish funksiyasi
-function generateCaptcha(length) {
-    // Raqamlar ko'proq bo'lsin
-    const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz';
-    let captcha = '';
-    for (let i = 0; i < length; i++) {
-        captcha += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return captcha;
-}
+
 
 // Dashboard sahifasi (himoyalangan)
 app.get('/dashboard.html', (req, res) => {

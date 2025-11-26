@@ -16,9 +16,7 @@ let currentCaptcha = '';
 const loginForm = document.getElementById('loginForm');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
-const captchaDisplay = document.getElementById('captchaDisplay');
-const captchaInput = document.getElementById('captchaInput');
-const refreshCaptchaBtn = document.getElementById('refreshCaptcha');
+
 const togglePasswordBtn = document.getElementById('togglePassword');
 const errorMessage = document.getElementById('errorMessage');
 const submitBtn = document.getElementById('submitBtn');
@@ -70,8 +68,7 @@ togglePasswordBtn.addEventListener('click', function () {
     this.style.transform = type === 'text' ? 'scale(1.1) rotate(180deg)' : 'scale(1)';
 });
 
-// CAPTCHA yangilash
-refreshCaptchaBtn.addEventListener('click', generateCaptcha);
+
 
 // Xato xabarini ko'rsatish
 function showError(message) {
@@ -192,8 +189,7 @@ loginForm.addEventListener('submit', async function (e) {
             },
             body: JSON.stringify({
                 username: username,
-                password: password,
-                captcha: captchaValue
+                password: password
             })
         });
 
@@ -228,16 +224,12 @@ loginForm.addEventListener('submit', async function (e) {
             }
 
             submitBtn.classList.remove('loading');
-            await generateCaptcha();
-            captchaInput.value = '';
             passwordInput.value = '';
         }
     } catch (error) {
         console.error('Login xatosi:', error);
         showError('Server bilan bog\'lanishda xatolik. Qayta urinib ko\'ring.');
         submitBtn.classList.remove('loading');
-        await generateCaptcha();
-        captchaInput.value = '';
     }
 });
 
