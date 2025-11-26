@@ -96,7 +96,7 @@ function validatePassword(password) {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
-        return 'Parol katta harf, kichik harf, raqam va maxsus belgidan iborat bo'lishi kerak';
+        return 'Parol katta harf, kichik harf, raqam va maxsus belgidan iborat bo\'lishi kerak';
     }
 
     return null;
