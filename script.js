@@ -39,16 +39,15 @@ function preventSQLInjection(input) {
 
 
 // Parolni ko'rsatish/yashirish
-togglePasswordBtn.addEventListener('click', function () {
-    const type = passwordInput.type === 'password' ? 'text' : 'password';
-    passwordInput.type = type;
-    this.style.transform = type === 'text' ? 'scale(1.1) rotate(180deg)' : 'scale(1)';
-});
-
-// CAPTCHA yangilash
-refreshCaptchaBtn.addEventListener('click', function () {
-    generateCaptcha();
-    captchaInput.value = '';
+if (togglePasswordBtn) {
+    togglePasswordBtn.addEventListener('click', function () {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        this.style.transform = type === 'text' ? 'scale(1.1) rotate(180deg)' : 'scale(1)';
+        console.log('Parol ko\'rinishi:', type);
+    });
+}
+captchaInput.value = '';
 });
 
 
