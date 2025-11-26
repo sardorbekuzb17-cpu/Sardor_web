@@ -284,6 +284,14 @@
         <div
             style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 60px 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); text-align: center;">
             <h2 style="font-size: 42px; color: #667eea; margin-bottom: 30px;">👨‍💻 Men Haqimda</h2>
+
+            <!-- Profile Image -->
+            <div style="margin-bottom: 40px;">
+                <img src="images/profile.jpg" alt="Makhmudov Sardor"
+                    style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid #667eea; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3); user-select: none; pointer-events: none; -webkit-user-drag: none;"
+                    draggable="false" oncontextmenu="return false;">
+            </div>
+
             <div style="max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.8; color: #333;">
                 <p style="font-size: 18px; margin-bottom: 20px;">
                     Salom! Men <strong>Makhmudov Sardor</strong> - professional web developer va dizayner.
@@ -415,51 +423,51 @@
             <a href="#" title="Telegram">✈️</a>
             <a href="#" title="Email">📧</a>
         </div>
-        <p>&copy; 2024 Makhmudov Sardor. Barcha huquqlar himoyalangan.</p>
+        <p>&copy; 2025 Makhmudov Sardor. Barcha huquqlar himoyalangan.</p>
     </footer>
 
     <link rel="stylesheet" href="protection.css">
     <script src="protection.js"></script>
     <script src="tracker.js"></script>
     <script></script>
-        // Animatsiyali counter
-        function animateCounter(id, target, duration = 2000) {
-            const element = document.getElementById(id);
-            const start = 0;
-            const increment = target / (duration / 16);
-            let current = start;
+    // Animatsiyali counter
+    function animateCounter(id, target, duration = 2000) {
+    const element = document.getElementById(id);
+    const start = 0;
+    const increment = target / (duration / 16);
+    let current = start;
 
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    element.textContent = target;
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(current);
-                }
-            }, 16);
-        }
+    const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) {
+    element.textContent = target;
+    clearInterval(timer);
+    } else {
+    element.textContent = Math.floor(current);
+    }
+    }, 16);
+    }
 
-        // Sahifa yuklanganda
-        window.addEventListener('load', () => {
-            animateCounter('projectsCount', 50);
-            animateCounter('clientsCount', 30);
-            animateCounter('experienceCount', 5);
-            animateCounter('visitsCount', 1000);
-        });
+    // Sahifa yuklanganda
+    window.addEventListener('load', () => {
+    animateCounter('projectsCount', 50);
+    animateCounter('clientsCount', 30);
+    animateCounter('experienceCount', 5);
+    animateCounter('visitsCount', 1000);
+    });
 
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+    target.scrollIntoView({
+    behavior: 'smooth'
+    });
+    }
+    });
+    });
     </script>
 </body>
 
