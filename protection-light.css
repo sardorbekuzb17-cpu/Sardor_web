@@ -1,0 +1,29 @@
+/* Yengil screenshot bloklash */
+
+/* Rasmlarni himoyalash */
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Print qilishda yashirish */
+@media print {
+    body {
+        display: none !important;
+    }
+
+    body::before {
+        content: '⚠️ Print taqiqlangan!';
+        display: block;
+        text-align: center;
+        font-size: 24px;
+        padding: 50px;
+    }
+}
