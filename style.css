@@ -218,14 +218,19 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 12px;
     text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-    letter-spacing: 8px;
+    font-size: 28px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 10px;
     user-select: none;
-    font-family: 'Courier New', monospace;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: 'Courier New', 'Consolas', monospace;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
     animation: captchaShake 0.5s ease;
+    line-height: 1.5;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @keyframes captchaShake {

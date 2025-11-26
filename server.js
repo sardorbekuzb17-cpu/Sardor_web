@@ -62,6 +62,7 @@ const users = [
 app.get('/api/captcha', (req, res) => {
     const captcha = generateCaptcha(6);
     req.session.captcha = captcha;
+    console.log('CAPTCHA yaratildi:', captcha);
     res.json({ captcha });
 });
 
@@ -229,7 +230,8 @@ app.post('/api/register', async (req, res) => {
 
 // CAPTCHA yaratish funksiyasi
 function generateCaptcha(length) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    // Raqamlar ko'proq bo'lsin
+    const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz';
     let captcha = '';
     for (let i = 0; i < length; i++) {
         captcha += chars.charAt(Math.floor(Math.random() * chars.length));

@@ -42,14 +42,23 @@ async function generateCaptcha() {
         const response = await fetch('/api/captcha');
         const data = await response.json();
         currentCaptcha = data.captcha;
-        captchaDisplay.textContent = data.captcha;
+
+        // CAPTCHA ni ko'rsatish
+        captchaDisplay.innerHTML = data.captcha;
         captchaDisplay.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        captchaDisplay.style.color = '#ffffff';
+        captchaDisplay.style.fontSize = '28px';
+        captchaDisplay.style.fontWeight = '900';
         captchaDisplay.style.animation = 'none';
+
         setTimeout(() => {
             captchaDisplay.style.animation = 'captchaShake 0.5s ease';
         }, 10);
+
+        console.log('CAPTCHA yuklandi:', data.captcha);
     } catch (error) {
         console.error('CAPTCHA xatosi:', error);
+        captchaDisplay.innerHTML = 'ERROR';
         showError('CAPTCHA yuklanmadi. Sahifani yangilang.');
     }
 }
