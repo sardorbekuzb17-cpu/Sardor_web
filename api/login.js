@@ -1,14 +1,19 @@
 import bcrypt from 'bcryptjs';
 
-// Foydalanuvchilar bazasi
-const users = [
-    {
-        id: 1,
-        username: 'Sardor',
-        password: '$2a$10$OHB0J/PkXacy2oE9qcdNUuIb3Xo000bche13.IQXKuFy7E1YRIsl.',
-        email: 'sardor@example.com'
-    }
-];
+// Foydalanuvchilar bazasi (global - barcha API lar uchun)
+// Production da database ishlatiladi
+if (!global.users) {
+    global.users = [
+        {
+            id: 1,
+            username: 'Sardor',
+            password: '$2a$10$OHB0J/PkXacy2oE9qcdNUuIb3Xo000bche13.IQXKuFy7E1YRIsl.',
+            email: 'sardor@example.com'
+        }
+    ];
+}
+
+const users = global.users;
 
 export default async function handler(req, res) {
     // CORS

@@ -1,7 +1,18 @@
 import bcrypt from 'bcryptjs';
 
-// Foydalanuvchilar bazasi (xotirada - production da database kerak)
-const users = [];
+// Foydalanuvchilar bazasi (global - barcha API lar uchun)
+if (!global.users) {
+    global.users = [
+        {
+            id: 1,
+            username: 'Sardor',
+            password: '$2a$10$OHB0J/PkXacy2oE9qcdNUuIb3Xo000bche13.IQXKuFy7E1YRIsl.',
+            email: 'sardor@example.com'
+        }
+    ];
+}
+
+const users = global.users;
 
 export default async function handler(req, res) {
     // CORS
@@ -56,6 +67,15 @@ export default async function handler(req, res) {
         // Parolni hash qilish
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Foydalanuvchi mavjudligini tekshirish
+        const existingUser = users.find(u => u.username === username || u.email === email);
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bu foydalanuvchi nomi yoki email allaqachon band'
+            });
+        }
+
         // Yangi foydalanuvchi
         const newUser = {
             id: Date.now(),
@@ -66,8 +86,10 @@ export default async function handler(req, res) {
         };
 
         users.push(newUser);
+        global.users = users; // Global ga saqlash
 
         console.log('Yangi foydalanuvchi ro\'yxatdan o\'tdi:', username);
+        console.log('Jami foydalanuvchilar:', users.length);
 
         return res.status(200).json({
             success: true,
