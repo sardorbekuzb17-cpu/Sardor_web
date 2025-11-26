@@ -16,6 +16,9 @@ let currentCaptcha = '';
 const loginForm = document.getElementById('loginForm');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
+const captchaDisplay = document.getElementById('captchaDisplay');
+const captchaInput = document.getElementById('captchaInput');
+const refreshCaptchaBtn = document.getElementById('refreshCaptcha');
 
 const togglePasswordBtn = document.getElementById('togglePassword');
 const errorMessage = document.getElementById('errorMessage');
@@ -34,38 +37,35 @@ function preventSQLInjection(input) {
     return input.replace(dangerous, '');
 }
 
-// CAPTCHA yaratish (serverdan)
-async function generateCaptcha() {
-    try {
-        const response = await fetch('/api/captcha');
-        const data = await response.json();
-        currentCaptcha = data.captcha;
-
-        // CAPTCHA ni ko'rsatish
-        captchaDisplay.innerHTML = data.captcha;
-        captchaDisplay.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        captchaDisplay.style.color = '#ffffff';
-        captchaDisplay.style.fontSize = '28px';
-        captchaDisplay.style.fontWeight = '900';
-        captchaDisplay.style.animation = 'none';
-
-        setTimeout(() => {
-            captchaDisplay.style.animation = 'captchaShake 0.5s ease';
-        }, 10);
-
-        console.log('CAPTCHA yuklandi:', data.captcha);
-    } catch (error) {
-        console.error('CAPTCHA xatosi:', error);
-        captchaDisplay.innerHTML = 'ERROR';
-        showError('CAPTCHA yuklanmadi. Sahifani yangilang.');
+// CAPTCHA yaratish (offline - browserda)
+function generateCaptcha() {
+    const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz';
+    let captcha = '';
+    for (let i = 0; i < 6; i++) {
+        captcha += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    currentCaptcha = captcha;
+    captchaDisplay.textContent = captcha;
+    captchaDisplay.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    captchaDisplay.style.animation = 'none';
+    setTimeout(() => {
+        captchaDisplay.style.animation = 'captchaShake 0.5s ease';
+    }, 10);
 }
+
+
 
 // Parolni ko'rsatish/yashirish
 togglePasswordBtn.addEventListener('click', function () {
     const type = passwordInput.type === 'password' ? 'text' : 'password';
     passwordInput.type = type;
     this.style.transform = type === 'text' ? 'scale(1.1) rotate(180deg)' : 'scale(1)';
+});
+
+// CAPTCHA yangilash
+refreshCaptchaBtn.addEventListener('click', function () {
+    generateCaptcha();
+    captchaInput.value = '';
 });
 
 
@@ -150,8 +150,18 @@ loginForm.addEventListener('submit', async function (e) {
     username = preventSQLInjection(username);
 
     // Validatsiya
-    if (!username || !password) {
+    if (!username || !password || !captchaValue) {
         showError('Barcha maydonlarni to\'ldiring');
+        return;
+    }
+
+    // CAPTCHA tekshirish
+    if (captchaValue !== currentCaptcha) {
+        showError('CAPTCHA noto\'g\'ri kiritildi');
+        generateCaptcha();
+        captchaInput.value = '';
+        loginAttempts++;
+        localStorage.setItem('loginAttempts', loginAttempts.toString());
         return;
     }
 
@@ -224,12 +234,16 @@ loginForm.addEventListener('submit', async function (e) {
             }
 
             submitBtn.classList.remove('loading');
+            generateCaptcha();
+            captchaInput.value = '';
             passwordInput.value = '';
         }
     } catch (error) {
         console.error('Login xatosi:', error);
         showError('Server bilan bog\'lanishda xatolik. Qayta urinib ko\'ring.');
         submitBtn.classList.remove('loading');
+        generateCaptcha();
+        captchaInput.value = '';
     }
 });
 
