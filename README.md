@@ -30,15 +30,11 @@ npm start
 
 4. Brauzerda oching: http://localhost:3000
 
-## 👤 Demo Foydalanuvchilar
+## 👤 Login Ma'lumotlari
 
-**Admin:**
-- Username: `admin`
-- Parol: `Admin@123`
-
-**User:**
-- Username: `user`
-- Parol: `User@123`
+**Foydalanuvchi:**
+- Username: `Sardor`
+- Parol: `Sardor_developer`
 
 ## 🛡️ Xavfsizlik
 

@@ -51,17 +51,10 @@ const loginLimiter = rateLimit({
 const users = [
     {
         id: 1,
-        username: 'admin',
-        // Parol: Admin@123
-        password: '$2a$10$2ul3/zL9gogkDbxp9y35X.LZB8QqRYa8BnlgrkSHTw3HW5vq3GA9G',
-        email: 'admin@example.com'
-    },
-    {
-        id: 2,
-        username: 'user',
-        // Parol: User@123
-        password: '$2a$10$aYCppXz.cUgjUyKo4LZGuu56sBF6IlAvSI.GNX1.FkOh45Ud7YagC',
-        email: 'user@example.com'
+        username: 'Sardor',
+        // Parol: Sardor_developer
+        password: '$2a$10$OHB0J/PkXacy2oE9qcdNUuIb3Xo000bche13.IQXKuFy7E1YRIsl.',
+        email: 'sardor@example.com'
     }
 ];
 
@@ -256,9 +249,9 @@ app.get('/dashboard.html', (req, res) => {
 app.listen(PORT, () => {
     console.log(`\n🚀 Server ishga tushdi!`);
     console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log(`\n📝 Demo foydalanuvchilar:`);
-    console.log(`   Username: admin | Parol: Admin@123`);
-    console.log(`   Username: user  | Parol: User@123`);
+    console.log(`\n📝 Login ma'lumotlari:`);
+    console.log(`   Username: Sardor`);
+    console.log(`   Parol: Sardor_developer`);
     console.log(`\n⏰ Server 24/7 ishlaydi. To'xtatish uchun Ctrl+C bosing.\n`);
 });
 

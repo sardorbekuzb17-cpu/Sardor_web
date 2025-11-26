@@ -4,15 +4,9 @@ const bcrypt = require('bcryptjs');
 const users = [
     {
         id: 1,
-        username: 'admin',
-        password: '$2a$10$2ul3/zL9gogkDbxp9y35X.LZB8QqRYa8BnlgrkSHTw3HW5vq3GA9G',
-        email: 'admin@example.com'
-    },
-    {
-        id: 2,
-        username: 'user',
-        password: '$2a$10$aYCppXz.cUgjUyKo4LZGuu56sBF6IlAvSI.GNX1.FkOh45Ud7YagC',
-        email: 'user@example.com'
+        username: 'Sardor',
+        password: '$2a$10$OHB0J/PkXacy2oE9qcdNUuIb3Xo000bche13.IQXKuFy7E1YRIsl.',
+        email: 'sardor@example.com'
     }
 ];
 
