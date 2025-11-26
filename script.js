@@ -39,7 +39,6 @@ function preventSQLInjection(input) {
 
 
 // Parolni ko'rsatish/yashirish
-// Parolni ko'rsatish/yashirish
 if (togglePasswordBtn) {
     togglePasswordBtn.addEventListener('click', function (e) {
         e.preventDefault();
@@ -51,7 +50,6 @@ if (togglePasswordBtn) {
 } else {
     console.error('togglePasswordBtn topilmadi!');
 }
-});
 
 
 
