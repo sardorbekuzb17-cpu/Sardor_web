@@ -183,16 +183,11 @@ loginForm.addEventListener('submit', async function (e) {
             localStorage.setItem('loginAttempts', '0');
             localStorage.removeItem('lockoutTime');
 
-            // Dashboard ga yo'naltirish - yangi tab da
+            // Dashboard ga yo'naltirish - joriy sahifada
             clearError();
 
-            // Yangi tab da ochish
-            window.open('/dashboard.html', '_blank');
-
-            // Login sahifasini tozalash
-            usernameInput.value = '';
-            passwordInput.value = '';
-            submitBtn.classList.remove('loading');
+            // Joriy sahifada ochish
+            window.location.href = '/dashboard.html';
         } else {
             // Noto'g'ri login
             loginAttempts++;
