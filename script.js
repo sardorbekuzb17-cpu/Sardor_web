@@ -183,14 +183,16 @@ loginForm.addEventListener('submit', async function (e) {
             localStorage.setItem('loginAttempts', '0');
             localStorage.removeItem('lockoutTime');
 
-            // Dashboard ga yo'naltirish
+            // Dashboard ga yo'naltirish - yangi tab da
             clearError();
-            captchaDisplay.textContent = '✓ Muvaffaqiyatli!';
-            captchaDisplay.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
 
-            setTimeout(() => {
-                window.location.href = '/dashboard.html';
-            }, 1000);
+            // Yangi tab da ochish
+            window.open('/dashboard.html', '_blank');
+
+            // Login sahifasini tozalash
+            usernameInput.value = '';
+            passwordInput.value = '';
+            submitBtn.classList.remove('loading');
         } else {
             // Noto'g'ri login
             loginAttempts++;
