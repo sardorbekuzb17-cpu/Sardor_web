@@ -16,9 +16,6 @@ let currentCaptcha = '';
 const loginForm = document.getElementById('loginForm');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
-const captchaDisplay = document.getElementById('captchaDisplay');
-const captchaInput = document.getElementById('captchaInput');
-const refreshCaptchaBtn = document.getElementById('refreshCaptcha');
 
 const togglePasswordBtn = document.getElementById('togglePassword');
 const errorMessage = document.getElementById('errorMessage');
@@ -37,21 +34,7 @@ function preventSQLInjection(input) {
     return input.replace(dangerous, '');
 }
 
-// CAPTCHA yaratish (offline - browserda)
-function generateCaptcha() {
-    const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz';
-    let captcha = '';
-    for (let i = 0; i < 6; i++) {
-        captcha += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    currentCaptcha = captcha;
-    captchaDisplay.textContent = captcha;
-    captchaDisplay.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-    captchaDisplay.style.animation = 'none';
-    setTimeout(() => {
-        captchaDisplay.style.animation = 'captchaShake 0.5s ease';
-    }, 10);
-}
+
 
 
 
@@ -144,24 +127,13 @@ loginForm.addEventListener('submit', async function (e) {
     // Inputlarni olish va tozalash
     let username = sanitizeInput(usernameInput.value.trim());
     let password = passwordInput.value;
-    const captchaValue = captchaInput.value.trim();
 
     // SQL Injection himoyasi
     username = preventSQLInjection(username);
 
     // Validatsiya
-    if (!username || !password || !captchaValue) {
+    if (!username || !password) {
         showError('Barcha maydonlarni to\'ldiring');
-        return;
-    }
-
-    // CAPTCHA tekshirish
-    if (captchaValue !== currentCaptcha) {
-        showError('CAPTCHA noto\'g\'ri kiritildi');
-        generateCaptcha();
-        captchaInput.value = '';
-        loginAttempts++;
-        localStorage.setItem('loginAttempts', loginAttempts.toString());
         return;
     }
 
@@ -234,16 +206,12 @@ loginForm.addEventListener('submit', async function (e) {
             }
 
             submitBtn.classList.remove('loading');
-            generateCaptcha();
-            captchaInput.value = '';
             passwordInput.value = '';
         }
     } catch (error) {
         console.error('Login xatosi:', error);
         showError('Server bilan bog\'lanishda xatolik. Qayta urinib ko\'ring.');
         submitBtn.classList.remove('loading');
-        generateCaptcha();
-        captchaInput.value = '';
     }
 });
 
@@ -292,7 +260,6 @@ setInterval(() => {
 
 // Sahifa yuklanganda
 window.addEventListener('load', function () {
-    generateCaptcha();
     checkLockout();
     checkSessionTimeout();
 
