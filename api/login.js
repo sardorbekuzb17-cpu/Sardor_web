@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 // Foydalanuvchilar bazasi
 const users = [
@@ -10,68 +10,22 @@ const users = [
     }
 ];
 
-// Login loglarini saqlash
-const loginLogs = [];
+export default async function handler(req, res) {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-// Qurilma ma'lumotlarini aniqlash
-function getDeviceInfo(userAgent) {
-    const ua = userAgent.toLowerCase();
-
-    let device = 'Desktop';
-    let icon = '💻';
-
-    if (/mobile|android|iphone|ipad|ipod/.test(ua)) {
-        device = 'Mobile';
-        icon = '📱';
-        if (/ipad/.test(ua)) {
-            device = 'Tablet';
-            icon = '📱';
-        }
-    } else if (/tablet/.test(ua)) {
-        device = 'Tablet';
-        icon = '📱';
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
     }
 
-    let browser = 'Unknown';
-    if (/chrome/.test(ua) && !/edge/.test(ua)) browser = 'Chrome';
-    else if (/firefox/.test(ua)) browser = 'Firefox';
-    else if (/safari/.test(ua) && !/chrome/.test(ua)) browser = 'Safari';
-    else if (/edge/.test(ua)) browser = 'Edge';
-    else if (/opera|opr/.test(ua)) browser = 'Opera';
-
-    let os = 'Unknown';
-    if (/windows/.test(ua)) os = 'Windows';
-    else if (/mac/.test(ua)) os = 'MacOS';
-    else if (/linux/.test(ua)) os = 'Linux';
-    else if (/android/.test(ua)) os = 'Android';
-    else if (/iphone|ipad|ipod/.test(ua)) os = 'iOS';
-
-    return { device, icon, browser, os };
-}
-
-// Joylashuvni aniqlash
-async function getLocation(ip) {
-    try {
-        const response = await fetch(`https://ipapi.co/${ip}/json/`);
-        const data = await response.json();
-
-        if (data.city && data.country_name) {
-            return `${data.city}, ${data.country_name}`;
-        }
-        return data.country_name || 'Unknown';
-    } catch (error) {
-        return 'Unknown';
-    }
-}
-
-export default async (req, res) => {
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
 
     try {
         const { username, password } = req.body;
-        const clientIp = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'Unknown';
 
         // Input validatsiya
         if (!username || !password) {
@@ -101,28 +55,7 @@ export default async (req, res) => {
             });
         }
 
-        // Qurilma va joylashuv ma'lumotlarini olish
-        const userAgent = req.headers['user-agent'] || '';
-        const deviceInfo = getDeviceInfo(userAgent);
-        const location = await getLocation(clientIp);
-
-        // Login logini saqlash
-        const loginLog = {
-            id: Date.now(),
-            username: user.username,
-            ip: clientIp,
-            device: deviceInfo.device,
-            deviceIcon: deviceInfo.icon,
-            browser: deviceInfo.browser,
-            os: deviceInfo.os,
-            location: location,
-            timestamp: new Date().toISOString(),
-            active: true
-        };
-
-        loginLogs.push(loginLog);
-
-        res.json({
+        return res.status(200).json({
             success: true,
             message: 'Muvaffaqiyatli kirdingiz',
             user: {
@@ -134,9 +67,9 @@ export default async (req, res) => {
 
     } catch (error) {
         console.error('Login xatosi:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: 'Server xatosi'
+            message: 'Server xatosi: ' + error.message
         });
     }
-};
+}

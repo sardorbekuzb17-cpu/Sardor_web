@@ -1,6 +1,7 @@
 {
     "name": "xavfsiz-login-tizimi",
     "version": "1.0.0",
+    "type": "module",
     "description": "24/7 ishlaydigan xavfsiz login tizimi",
     "main": "server.js",
     "scripts": {
