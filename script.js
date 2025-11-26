@@ -177,6 +177,8 @@ loginForm.addEventListener('submit', async function (e) {
 
         const data = await response.json();
 
+        console.log('Server javobi:', data);
+
         if (data.success) {
             // Muvaffaqiyatli login
             loginAttempts = 0;
@@ -186,8 +188,12 @@ loginForm.addEventListener('submit', async function (e) {
             // Yangi saytga yo'naltirish
             clearError();
 
+            console.log('Redirecting to main-site.html...');
+
             // Asosiy saytga o'tish
-            window.location.href = '/main-site.html';
+            setTimeout(() => {
+                window.location.href = '/main-site.html';
+            }, 500);
         } else {
             // Noto'g'ri login
             loginAttempts++;
