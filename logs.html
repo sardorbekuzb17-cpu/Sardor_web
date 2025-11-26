@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirish Loglar - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .logs-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .logs-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logs-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .device-icon {
+            font-size: 20px;
+            margin-right: 5px;
+        }
+
+        .location {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .time {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .status-online {
+            color: #43e97b;
+            font-weight: bold;
+        }
+
+        .status-offline {
+            color: #999;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="dashboard.html" class="back-btn">← Dashboard ga qaytish</a>
+
+        <h1>🔒 Kirish Loglar va Monitoring</h1>
+        <p style="color: #666; margin-bottom: 20px;">Saytingizga kim, qayerdan, qanday qurilmadan kirayotganini ko'ring
+        </p>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Jami Kirishlar</h3>
+                <div class="number" id="totalLogins">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Bugun</h3>
+                <div class="number" id="todayLogins">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Aktiv Sessiyalar</h3>
+                <div class="number" id="activeSessions">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Turli Qurilmalar</h3>
+                <div class="number" id="uniqueDevices">0</div>
+            </div>
+        </div>
+
+        <button class="refresh-btn" onclick="loadLogs()">🔄 Yangilash</button>
+
+        <table class="logs-table">
+            <thead>
+                <tr>
+                    <th>Vaqt</th>
+                    <th>Foydalanuvchi</th>
+                    <th>Qurilma</th>
+                    <th>Brauzer</th>
+                    <th>IP Manzil</th>
+                    <th>Joylashuv</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="logsBody">
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 30px;">
+                        Loglar yuklanmoqda...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function loadLogs() {
+            try {
+                const response = await fetch('/api/logs');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Statistikani yangilash
+                    document.getElementById('totalLogins').textContent = data.stats.total;
+                    document.getElementById('todayLogins').textContent = data.stats.today;
+                    document.getElementById('activeSessions').textContent = data.stats.active;
+                    document.getElementById('uniqueDevices').textContent = data.stats.devices;
+
+                    // Loglarni ko'rsatish
+                    const tbody = document.getElementById('logsBody');
+                    if (data.logs.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px;">Hozircha loglar yo\'q</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = data.logs.map(log => `
+                        <tr>
+                            <td class="time">${new Date(log.timestamp).toLocaleString('uz-UZ')}</td>
+                            <td><strong>${log.username}</strong></td>
+                            <td>
+                                <span class="device-icon">${log.deviceIcon}</span>
+                                ${log.device}
+                            </td>
+                            <td>${log.browser}</td>
+                            <td><code>${log.ip}</code></td>
+                            <td class="location">${log.location}</td>
+                            <td class="${log.active ? 'status-online' : 'status-offline'}">
+                                ${log.active ? '🟢 Aktiv' : '⚫ Offline'}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Loglarni yuklashda xatolik:', error);
+                document.getElementById('logsBody').innerHTML =
+                    '<tr><td colspan="7" style="text-align: center; padding: 30px; color: red;">Xatolik yuz berdi</td></tr>';
+            }
+        }
+
+        // Sahifa yuklanganda
+        loadLogs();
+
+        // Har 30 soniyada avtomatik yangilash
+        setInterval(loadLogs, 30000);
+    </script>
+</body>
+
+</html>

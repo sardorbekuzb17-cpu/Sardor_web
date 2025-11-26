@@ -9,6 +9,9 @@ const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Login loglarini saqlash (xotirada - production da database kerak)
+const loginLogs = [];
+
 // Xavfsizlik middleware
 app.use(helmet({
     contentSecurityPolicy: {
@@ -104,6 +107,28 @@ app.post('/api/login', loginLimiter, async (req, res) => {
             });
         }
 
+        // Qurilma va joylashuv ma'lumotlarini olish
+        const userAgent = req.headers['user-agent'] || '';
+        const deviceInfo = getDeviceInfo(userAgent);
+        const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Unknown';
+
+        // Login logini saqlash
+        const loginLog = {
+            id: Date.now(),
+            username: user.username,
+            ip: clientIp,
+            device: deviceInfo.device,
+            deviceIcon: deviceInfo.icon,
+            browser: deviceInfo.browser,
+            os: deviceInfo.os,
+            location: 'Local', // Local server uchun
+            timestamp: new Date().toISOString(),
+            active: true
+        };
+
+        loginLogs.push(loginLog);
+        console.log('Login log:', loginLog);
+
         // Session yaratish
         req.session.userId = user.id;
         req.session.username = user.username;
@@ -163,8 +188,8 @@ app.get('/api/check-session', (req, res) => {
     }
 });
 
-// Yangi foydalanuvchi qo'shish (demo uchun)
-app.post('/api/register', async (req, res) => {
+// Ro'yxatdan o'tish endpoint
+app.post('/api/register', loginLimiter, async (req, res) => {
     try {
         const { username, password, email } = req.body;
 
@@ -219,6 +244,69 @@ app.get('/dashboard.html', (req, res) => {
         return res.redirect('/');
     }
     res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+// Qurilma ma'lumotlarini aniqlash
+function getDeviceInfo(userAgent) {
+    const ua = userAgent.toLowerCase();
+
+    let device = 'Desktop';
+    let icon = '💻';
+
+    if (/mobile|android|iphone|ipad|ipod/.test(ua)) {
+        device = 'Mobile';
+        icon = '📱';
+        if (/ipad/.test(ua)) {
+            device = 'Tablet';
+            icon = '📱';
+        }
+    } else if (/tablet/.test(ua)) {
+        device = 'Tablet';
+        icon = '📱';
+    }
+
+    let browser = 'Unknown';
+    if (/chrome/.test(ua) && !/edge/.test(ua)) browser = 'Chrome';
+    else if (/firefox/.test(ua)) browser = 'Firefox';
+    else if (/safari/.test(ua) && !/chrome/.test(ua)) browser = 'Safari';
+    else if (/edge/.test(ua)) browser = 'Edge';
+    else if (/opera|opr/.test(ua)) browser = 'Opera';
+
+    let os = 'Unknown';
+    if (/windows/.test(ua)) os = 'Windows';
+    else if (/mac/.test(ua)) os = 'MacOS';
+    else if (/linux/.test(ua)) os = 'Linux';
+    else if (/android/.test(ua)) os = 'Android';
+    else if (/iphone|ipad|ipod/.test(ua)) os = 'iOS';
+
+    return { device, icon, browser, os };
+}
+
+// Loglarni olish API
+app.get('/api/logs', (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            success: false,
+            message: 'Avtorizatsiya talab qilinadi'
+        });
+    }
+
+    // Statistika
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const stats = {
+        total: loginLogs.length,
+        today: loginLogs.filter(log => new Date(log.timestamp) >= todayStart).length,
+        active: loginLogs.filter(log => log.active).length,
+        devices: new Set(loginLogs.map(log => log.device)).size
+    };
+
+    res.json({
+        success: true,
+        stats: stats,
+        logs: loginLogs.slice(-50).reverse()
+    });
 });
 
 // Server ishga tushirish

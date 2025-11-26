@@ -444,6 +444,21 @@ body {
     color: #764ba2;
 }
 
+.success-message {
+    color: #43e97b;
+    font-size: 13px;
+    margin-bottom: 15px;
+    text-align: center;
+    min-height: 20px;
+    font-weight: 500;
+    animation: fadeIn 0.5s ease;
+}
+
+.footer-links p {
+    color: #666;
+    font-size: 14px;
+}
+
 @media (max-width: 480px) {
     .login-form {
         padding: 40px 30px;

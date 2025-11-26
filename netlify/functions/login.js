@@ -1,5 +1,61 @@
 const bcrypt = require('bcryptjs');
 
+// Login loglarini saqlash
+const loginLogs = [];
+
+// Qurilma ma'lumotlarini aniqlash
+function getDeviceInfo(userAgent) {
+    const ua = userAgent.toLowerCase();
+
+    let device = 'Desktop';
+    let icon = '💻';
+
+    if (/mobile|android|iphone|ipad|ipod/.test(ua)) {
+        device = 'Mobile';
+        icon = '📱';
+        if (/ipad/.test(ua)) {
+            device = 'Tablet';
+            icon = '📱';
+        }
+    } else if (/tablet/.test(ua)) {
+        device = 'Tablet';
+        icon = '📱';
+    }
+
+    let browser = 'Unknown';
+    if (/chrome/.test(ua) && !/edge/.test(ua)) browser = 'Chrome';
+    else if (/firefox/.test(ua)) browser = 'Firefox';
+    else if (/safari/.test(ua) && !/chrome/.test(ua)) browser = 'Safari';
+    else if (/edge/.test(ua)) browser = 'Edge';
+    else if (/opera|opr/.test(ua)) browser = 'Opera';
+
+    let os = 'Unknown';
+    if (/windows/.test(ua)) os = 'Windows';
+    else if (/mac/.test(ua)) os = 'MacOS';
+    else if (/linux/.test(ua)) os = 'Linux';
+    else if (/android/.test(ua)) os = 'Android';
+    else if (/iphone|ipad|ipod/.test(ua)) os = 'iOS';
+
+    return { device, icon, browser, os };
+}
+
+// Joylashuvni aniqlash (IP orqali)
+async function getLocation(ip) {
+    try {
+        // ipapi.co dan foydalanish (bepul)
+        const response = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await response.json();
+
+        if (data.city && data.country_name) {
+            return `${data.city}, ${data.country_name}`;
+        }
+        return data.country_name || 'Unknown';
+    } catch (error) {
+        console.error('Location xatosi:', error);
+        return 'Unknown';
+    }
+}
+
 // Foydalanuvchilar bazasi
 const users = [
     {
@@ -104,6 +160,28 @@ exports.handler = async (event, context) => {
 
         // Muvaffaqiyatli login
         loginAttempts.delete(clientIp);
+
+        // Qurilma va joylashuv ma'lumotlarini olish
+        const userAgent = event.headers['user-agent'] || '';
+        const deviceInfo = getDeviceInfo(userAgent);
+        const location = await getLocation(clientIp);
+
+        // Login logini saqlash
+        const loginLog = {
+            id: Date.now(),
+            username: user.username,
+            ip: clientIp,
+            device: deviceInfo.device,
+            deviceIcon: deviceInfo.icon,
+            browser: deviceInfo.browser,
+            os: deviceInfo.os,
+            location: location,
+            timestamp: new Date().toISOString(),
+            active: true
+        };
+
+        loginLogs.push(loginLog);
+        console.log('Login log:', loginLog);
 
         // Session token yaratish
         const sessionToken = Date.now().toString(36) + Math.random().toString(36);
