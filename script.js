@@ -142,13 +142,6 @@ loginForm.addEventListener('submit', async function (e) {
         return;
     }
 
-    // Parol kuchliligini tekshirish
-    const passwordError = validatePassword(password);
-    if (passwordError) {
-        showError(passwordError);
-        return;
-    }
-
     // CAPTCHA tekshirish
     if (captchaValue !== currentCaptcha) {
         showError('CAPTCHA noto\'g\'ri kiritildi');
