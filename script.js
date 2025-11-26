@@ -39,15 +39,18 @@ function preventSQLInjection(input) {
 
 
 // Parolni ko'rsatish/yashirish
+// Parolni ko'rsatish/yashirish
 if (togglePasswordBtn) {
-    togglePasswordBtn.addEventListener('click', function () {
+    togglePasswordBtn.addEventListener('click', function (e) {
+        e.preventDefault();
         const type = passwordInput.type === 'password' ? 'text' : 'password';
         passwordInput.type = type;
         this.style.transform = type === 'text' ? 'scale(1.1) rotate(180deg)' : 'scale(1)';
-        console.log('Parol ko\'rinishi:', type);
+        console.log('Parol ko\'rinishi o\'zgartirildi:', type);
     });
+} else {
+    console.error('togglePasswordBtn topilmadi!');
 }
-captchaInput.value = '';
 });
 
 
