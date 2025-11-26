@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔴 LIVE Monitoring - Real-time Tashrif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff4444;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1e2139 0%, #2a2d4a 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h3 {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .number {
+            font-size: 42px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .visitors-section {
+            background: linear-gradient(135deg, #1e2139 0%, #2a2d4a 100%);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .visitor-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .visitor-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .visitor-card.new {
+            border-color: #43e97b;
+            box-shadow: 0 0 20px rgba(67, 233, 123, 0.3);
+        }
+
+        .visitor-icon {
+            font-size: 48px;
+        }
+
+        .visitor-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .visitor-info .name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .visitor-info .details {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .visitor-info .details span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .visitor-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: #43e97b;
+            color: #0a0e27;
+        }
+
+        .status-offline {
+            background: #555;
+            color: #aaa;
+        }
+
+        .time-ago {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .map-container {
+            margin-top: 30px;
+            background: linear-gradient(135deg, #1e2139 0%, #2a2d4a 100%);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .map-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .country-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .country-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .country-item .flag {
+            font-size: 24px;
+        }
+
+        .country-item .count {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .no-visitors {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .visitor-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .visitor-status {
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🔴 LIVE Monitoring Dashboard</h1>
+        <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span>Real-time Tashrif Kuzatuvi</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Hozir Saytda</h3>
+                <div class="number" id="onlineNow">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Bugun</h3>
+                <div class="number" id="todayVisits">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Jami Tashrif</h3>
+                <div class="number" id="totalVisits">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Turli Mamlakatlar</h3>
+                <div class="number" id="countries">0</div>
+            </div>
+        </div>
+
+        <div class="visitors-section">
+            <div class="section-header">
+                <h2>📊 Jonli Tashriflar</h2>
+                <button class="refresh-btn" onclick="loadVisitors()">🔄 Yangilash</button>
+            </div>
+            <div id="visitorsList">
+                <div class="no-visitors">Ma'lumotlar yuklanmoqda...</div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <h2>🌍 Mamlakatlar bo'yicha</h2>
+            <div class="country-list" id="countryList">
+                <div class="no-visitors">Ma'lumotlar yuklanmoqda...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let lastVisitorCount = 0;
+
+        async function loadVisitors() {
+            try {
+                const response = await fetch('/api/visitors');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Statistikani yangilash
+                    document.getElementById('onlineNow').textContent = data.stats.online;
+                    document.getElementById('todayVisits').textContent = data.stats.today;
+                    document.getElementById('totalVisits').textContent = data.stats.total;
+                    document.getElementById('countries').textContent = data.stats.countries;
+
+                    // Tashriflarni ko'rsatish
+                    const visitorsList = document.getElementById('visitorsList');
+
+                    if (data.visitors.length === 0) {
+                        visitorsList.innerHTML = '<div class="no-visitors">Hozircha tashrif yo\'q</div>';
+                        return;
+                    }
+
+                    // Yangi tashrif borligini tekshirish
+                    const isNewVisitor = data.visitors.length > lastVisitorCount;
+                    lastVisitorCount = data.visitors.length;
+
+                    visitorsList.innerHTML = data.visitors.map((visitor, index) => `
+                        <div class="visitor-card ${index === 0 && isNewVisitor ? 'new' : ''}">
+                            <div class="visitor-icon">${visitor.deviceIcon}</div>
+                            <div class="visitor-info">
+                                <div class="name">${visitor.page || 'Asosiy sahifa'}</div>
+                                <div class="details">
+                                    <span>📍 ${visitor.location}</span>
+                                    <span>💻 ${visitor.device}</span>
+                                    <span>🌐 ${visitor.browser}</span>
+                                    <span>🔢 ${visitor.ip}</span>
+                                </div>
+                            </div>
+                            <div class="visitor-status">
+                                <span class="status-badge ${visitor.active ? 'status-online' : 'status-offline'}">
+                                    ${visitor.active ? '🟢 Online' : '⚫ Offline'}
+                                </span>
+                                <span class="time-ago">${getTimeAgo(visitor.timestamp)}</span>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Mamlakatlar ro'yxati
+                    const countryList = document.getElementById('countryList');
+                    if (data.countries && Object.keys(data.countries).length > 0) {
+                        countryList.innerHTML = Object.entries(data.countries).map(([country, count]) => `
+                            <div class="country-item">
+                                <span>${country}</span>
+                                <span class="count">${count}</span>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Xatolik:', error);
+                document.getElementById('visitorsList').innerHTML =
+                    '<div class="no-visitors" style="color: #ff4444;">Ma\'lumotlarni yuklashda xatolik</div>';
+            }
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diff = Math.floor((now - time) / 1000);
+
+            if (diff < 60) return `${diff} soniya oldin`;
+            if (diff < 3600) return `${Math.floor(diff / 60)} daqiqa oldin`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)} soat oldin`;
+            return `${Math.floor(diff / 86400)} kun oldin`;
+        }
+
+        // Sahifa yuklanganda
+        loadVisitors();
+
+        // Har 5 soniyada avtomatik yangilash
+        setInterval(loadVisitors, 5000);
+
+        // Yangi tashrif haqida bildirishnoma
+        let notificationShown = false;
+        setInterval(() => {
+            if (!notificationShown && 'Notification' in window) {
+                Notification.requestPermission();
+                notificationShown = true;
+            }
+        }, 10000);
+    </script>
+</body>
+
+</html>
