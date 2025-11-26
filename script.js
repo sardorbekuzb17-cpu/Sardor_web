@@ -142,16 +142,6 @@ loginForm.addEventListener('submit', async function (e) {
         return;
     }
 
-    // CAPTCHA tekshirish
-    if (captchaValue !== currentCaptcha) {
-        showError('CAPTCHA noto\'g\'ri kiritildi');
-        await generateCaptcha();
-        captchaInput.value = '';
-        loginAttempts++;
-        localStorage.setItem('loginAttempts', loginAttempts.toString());
-        return;
-    }
-
     // Loading holatini yoqish
     submitBtn.classList.add('loading');
 
