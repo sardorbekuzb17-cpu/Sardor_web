@@ -1,4 +1,6 @@
 {
+    "buildCommand": "echo 'No build'",
+    "outputDirectory": ".",
     "rewrites": [
         {
             "source": "/api/login",
