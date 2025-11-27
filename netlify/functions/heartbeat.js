@@ -1,40 +1,46 @@
-// Heartbeat - foydalanuvchi hali online ekanligini bildiradi
-let visitors = [];
+import clientPromise from '../lib/mongodb.js';
 
-exports.handler = async (event, context) => {
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ success: false })
-        };
+export default async function handler(req, res) {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ success: false });
     }
 
     try {
-        const { sessionId } = JSON.parse(event.body);
+        const { sessionId } = req.body;
 
-        // Foydalanuvchini topish va lastSeen ni yangilash
-        const visitor = visitors.find(v => v.id === sessionId);
-        if (visitor) {
-            visitor.lastSeen = new Date().toISOString();
-            visitor.active = true;
+        if (!sessionId) {
+            return res.status(400).json({ success: false, message: 'Session ID kerak' });
         }
 
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                success: true
-            })
-        };
+        // MongoDB ga ulanish
+        const client = await clientPromise;
+        const db = client.db('loginSystem');
+        const visitorsCollection = db.collection('visitors');
+
+        // Session ni yangilash
+        await visitorsCollection.updateOne(
+            { sessionId: sessionId },
+            {
+                $set: {
+                    lastSeen: new Date(),
+                    active: true
+                }
+            }
+        );
+
+        return res.status(200).json({ success: true });
 
     } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ success: false })
-        };
+        console.error('Heartbeat xatosi:', error);
+        return res.status(500).json({ success: false });
     }
-};
-
-exports.visitors = visitors;
+}

@@ -1,67 +1,55 @@
-// Login loglarini saqlash (xotirada - production da database kerak)
-const loginLogs = [];
+import clientPromise from '../lib/mongodb.js';
 
-// Cookie dan ma'lumot olish
-function getCookie(cookieString, name) {
-    if (!cookieString) return null;
-    const cookies = cookieString.split(';');
-    for (let cookie of cookies) {
-        const [key, value] = cookie.trim().split('=');
-        if (key === name) return value;
+export default async function handler(req, res) {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
     }
-    return null;
-}
 
-exports.handler = async (event, context) => {
+    if (req.method !== 'GET') {
+        return res.status(405).json({ success: false, message: 'Method not allowed' });
+    }
+
     try {
-        // Session tekshirish
-        const sessionToken = getCookie(event.headers.cookie, 'sessionToken');
-        const username = getCookie(event.headers.cookie, 'username');
+        // MongoDB ga ulanish
+        const client = await clientPromise;
+        const db = client.db('loginSystem');
+        const logsCollection = db.collection('loginLogs');
 
-        if (!sessionToken || !username) {
-            return {
-                statusCode: 401,
-                body: JSON.stringify({
-                    success: false,
-                    message: 'Avtorizatsiya talab qilinadi'
-                })
-            };
-        }
+        // Barcha loglarni olish (oxirgi 100 ta)
+        const logs = await logsCollection
+            .find({})
+            .sort({ timestamp: -1 })
+            .limit(100)
+            .toArray();
 
-        // Statistika hisoblash
+        // Statistika
         const now = new Date();
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
         const stats = {
-            total: loginLogs.length,
-            today: loginLogs.filter(log => new Date(log.timestamp) >= todayStart).length,
-            active: loginLogs.filter(log => log.active).length,
-            devices: new Set(loginLogs.map(log => log.device)).size
+            total: await logsCollection.countDocuments({}),
+            today: await logsCollection.countDocuments({
+                timestamp: { $gte: todayStart }
+            }),
+            uniqueUsers: (await logsCollection.distinct('username')).length
         };
 
-        // Loglarni qaytarish (oxirgi 50 ta)
-        const recentLogs = loginLogs.slice(-50).reverse();
-
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                success: true,
-                stats: stats,
-                logs: recentLogs
-            })
-        };
+        return res.status(200).json({
+            success: true,
+            stats: stats,
+            logs: logs
+        });
 
     } catch (error) {
         console.error('Logs xatosi:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                success: false,
-                message: 'Server xatosi'
-            })
-        };
+        return res.status(500).json({
+            success: false,
+            message: 'Server xatosi: ' + error.message
+        });
     }
-};
+}

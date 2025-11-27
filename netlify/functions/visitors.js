@@ -1,60 +1,58 @@
-// Tashriflar ro'yxati (track.js dan import qilinadi)
-let visitors = [];
+import clientPromise from '../lib/mongodb.js';
 
-exports.handler = async (event, context) => {
+export default async function handler(req, res) {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    if (req.method !== 'GET') {
+        return res.status(405).json({ success: false, message: 'Method not allowed' });
+    }
+
     try {
-        // Aktiv tashriflarni yangilash (5 daqiqadan eski bo'lsa offline)
-        const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
-        visitors.forEach(v => {
-            if (new Date(v.lastSeen).getTime() < fiveMinutesAgo) {
-                v.active = false;
-            }
-        });
+        // MongoDB ga ulanish
+        const client = await clientPromise;
+        const db = client.db('loginSystem');
+        const visitorsCollection = db.collection('visitors');
+
+        // Barcha tashriflarni olish (oxirgi 100 ta)
+        const visitors = await visitorsCollection
+            .find({})
+            .sort({ timestamp: -1 })
+            .limit(100)
+            .toArray();
 
         // Statistika
         const now = new Date();
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
         const stats = {
-            online: visitors.filter(v => v.active).length,
-            today: visitors.filter(v => new Date(v.timestamp) >= todayStart).length,
-            total: visitors.length,
-            countries: new Set(visitors.map(v => v.country)).size
-        };
-
-        // Mamlakatlar bo'yicha
-        const countries = {};
-        visitors.forEach(v => {
-            countries[v.country] = (countries[v.country] || 0) + 1;
-        });
-
-        // Oxirgi 50 ta tashrif
-        const recentVisitors = visitors.slice(-50).reverse();
-
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                success: true,
-                stats: stats,
-                visitors: recentVisitors,
-                countries: countries
+            total: await visitorsCollection.countDocuments({}),
+            today: await visitorsCollection.countDocuments({
+                timestamp: { $gte: todayStart }
+            }),
+            active: await visitorsCollection.countDocuments({
+                active: true,
+                lastSeen: { $gte: new Date(Date.now() - 5 * 60 * 1000) } // 5 daqiqa ichida
             })
         };
+
+        return res.status(200).json({
+            success: true,
+            stats: stats,
+            visitors: visitors
+        });
 
     } catch (error) {
         console.error('Visitors xatosi:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                success: false,
-                message: 'Server xatosi'
-            })
-        };
+        return res.status(500).json({
+            success: false,
+            message: 'Server xatosi: ' + error.message
+        });
     }
-};
-
-// Visitors arrayni export qilish
-exports.visitors = visitors;
+}

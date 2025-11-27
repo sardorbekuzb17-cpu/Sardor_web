@@ -1,5 +1,4 @@
-// Tashriflarni saqlash (xotirada - production da database kerak)
-const visitors = [];
+import clientPromise from '../lib/mongodb.js';
 
 // Joylashuvni aniqlash
 async function getLocation(ip) {
@@ -11,37 +10,40 @@ async function getLocation(ip) {
             return {
                 city: data.city,
                 country: data.country_name,
-                flag: data.country_code,
                 full: `${data.city}, ${data.country_name}`
             };
         }
         return {
             city: 'Unknown',
             country: data.country_name || 'Unknown',
-            flag: data.country_code || '🌍',
             full: data.country_name || 'Unknown'
         };
     } catch (error) {
         return {
             city: 'Unknown',
             country: 'Unknown',
-            flag: '🌍',
             full: 'Unknown'
         };
     }
 }
 
-exports.handler = async (event, context) => {
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ success: false, message: 'Method not allowed' })
-        };
+export default async (req, res) => {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ success: false });
     }
 
     try {
-        const visitorData = JSON.parse(event.body);
-        const clientIp = event.headers['x-forwarded-for'] || event.headers['client-ip'] || 'Unknown';
+        const visitorData = req.body;
+        const clientIp = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'Unknown';
 
         // Joylashuvni aniqlash
         const location = await getLocation(clientIp);
@@ -49,9 +51,14 @@ exports.handler = async (event, context) => {
         // Session ID yaratish
         const sessionId = Date.now().toString(36) + Math.random().toString(36);
 
+        // MongoDB ga ulanish
+        const client = await clientPromise;
+        const db = client.db('loginSystem');
+        const visitorsCollection = db.collection('visitors');
+
         // Tashrif ma'lumotlarini saqlash
         const visitor = {
-            id: sessionId,
+            sessionId: sessionId,
             ip: clientIp,
             device: visitorData.device,
             deviceIcon: visitorData.deviceIcon,
@@ -62,47 +69,23 @@ exports.handler = async (event, context) => {
             location: location.full,
             country: location.country,
             city: location.city,
-            screenWidth: visitorData.screenWidth,
-            screenHeight: visitorData.screenHeight,
-            language: visitorData.language,
-            timestamp: new Date().toISOString(),
-            lastSeen: new Date().toISOString(),
+            timestamp: new Date(),
+            lastSeen: new Date(),
             active: true
         };
 
-        visitors.push(visitor);
+        await visitorsCollection.insertOne(visitor);
 
-        // Eski tashriflarni tozalash (24 soatdan eski)
-        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-        const filtered = visitors.filter(v => new Date(v.timestamp).getTime() > oneDayAgo);
-        visitors.length = 0;
-        visitors.push(...filtered);
-
-        console.log('Yangi tashrif:', visitor);
-
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                success: true,
-                sessionId: sessionId,
-                message: 'Tashrif qayd qilindi'
-            })
-        };
+        res.json({
+            success: true,
+            sessionId: sessionId
+        });
 
     } catch (error) {
         console.error('Track xatosi:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                success: false,
-                message: 'Server xatosi'
-            })
-        };
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
-
-// Export qilish (boshqa funksiyalar uchun)
-exports.visitors = visitors;
