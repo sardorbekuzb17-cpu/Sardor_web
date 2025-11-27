@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { MongoClient } from 'mongodb';
+import clientPromise from '../lib/mongodb.js';
 
 export default async function handler(req, res) {
     // CORS
@@ -27,9 +27,7 @@ export default async function handler(req, res) {
         }
 
         // MongoDB ga ulanish
-        const client = new MongoClient(process.env.MONGODB_URI);
-        await client.connect();
-
+        const client = await clientPromise;
         const db = client.db('loginSystem');
         const usersCollection = db.collection('users');
 
@@ -37,7 +35,6 @@ export default async function handler(req, res) {
         const user = await usersCollection.findOne({ username: username });
 
         if (!user) {
-            await client.close();
             return res.status(401).json({
                 success: false,
                 message: 'Noto\'g\'ri foydalanuvchi nomi yoki parol'
@@ -48,7 +45,6 @@ export default async function handler(req, res) {
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (!isValidPassword) {
-            await client.close();
             return res.status(401).json({
                 success: false,
                 message: 'Noto\'g\'ri foydalanuvchi nomi yoki parol'
@@ -64,8 +60,6 @@ export default async function handler(req, res) {
             ip: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'Unknown',
             userAgent: req.headers['user-agent'] || 'Unknown'
         });
-
-        await client.close();
 
         return res.status(200).json({
             success: true,
