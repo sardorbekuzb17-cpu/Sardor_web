@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import clientPromise from '../lib/mongodb.js';
+import clientPromise from './_mongodb.js';
 
 export default async function handler(req, res) {
     // CORS

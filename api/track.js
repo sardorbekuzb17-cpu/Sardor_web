@@ -1,4 +1,4 @@
-import clientPromise from '../lib/mongodb.js';
+import clientPromise from './_mongodb.js';
 
 // Joylashuvni aniqlash (to'liq ma'lumotlar bilan)
 async function getLocation(ip) {
