@@ -146,21 +146,25 @@ loginForm.addEventListener('submit', async function (e) {
     submitBtn.classList.add('loading');
 
     try {
-        // Backend API ga so'rov yuborish
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
-        });
+        // Oddiy login tekshiruvi (test uchun)
+        const validUsers = {
+            'Sardor': 'Sardor_developer',
+            'admin': 'admin123'
+        };
 
-        const data = await response.json();
+        let data = { success: false, message: 'Noto\'g\'ri ma\'lumotlar' };
 
-        console.log('Server javobi:', data);
+        if (validUsers[username] && validUsers[username] === password) {
+            data = {
+                success: true,
+                user: {
+                    username: username,
+                    id: Date.now()
+                }
+            };
+        }
+
+        console.log('Login natijasi:', data);
 
         if (data.success) {
             // Muvaffaqiyatli login
