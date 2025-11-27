@@ -1,6 +1,34 @@
-# 🔐 Xavfsiz Login Tizimi
+# 🌐 Makhmudov Sardor - Portfolio & Monitoring
 
-24/7 ishlaydigan professional login tizimi.
+2ta alohida web sayt:
+
+## 🔗 Sayt Linklari
+
+### 📱 SAYT 1 - Portfolio (Foydalanuvchilar uchun)
+**Link:** https://sardor-web.vercel.app/site1.html
+
+Bu saytda:
+- ✅ Login / Kirish
+- ✅ Ro'yxatdan o'tish
+- ✅ Men haqimda (Portfolio)
+- ✅ Quyosh24 reklama
+
+### 🔐 SAYT 2 - Admin Monitoring (Faqat admin uchun)
+**Link:** https://sardor-web.vercel.app/site2.html
+
+Bu saytda:
+- ✅ Kim saytga kirgan
+- ✅ Qaysi qurilmadan kirgan
+- ✅ Qaysi shahardan kirgan
+- ✅ Aniq vaqt va sana
+- ✅ IP manzil va koordinatalar
+- ✅ Real-time monitoring
+
+**Admin Parol:** `sardor2025`
+
+---
+
+24/7 ishlaydigan professional tizim.
 
 ## ✨ Xususiyatlar
 
