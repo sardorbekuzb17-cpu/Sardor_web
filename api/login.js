@@ -1,19 +1,5 @@
 import bcrypt from 'bcryptjs';
-
-// Foydalanuvchilar bazasi (global - barcha API lar uchun)
-// Production da database ishlatiladi
-if (!global.users) {
-    global.users = [
-        {
-            id: 1,
-            username: 'Sardor',
-            password: '$2a$10$OHB0J/PkXacy2oE9qcdNUuIb3Xo000bche13.IQXKuFy7E1YRIsl.',
-            email: 'sardor@example.com'
-        }
-    ];
-}
-
-const users = global.users;
+import clientPromise from '../lib/mongodb.js';
 
 export default async function handler(req, res) {
     // CORS
@@ -40,8 +26,13 @@ export default async function handler(req, res) {
             });
         }
 
+        // MongoDB ga ulanish
+        const client = await clientPromise;
+        const db = client.db('loginSystem');
+        const usersCollection = db.collection('users');
+
         // Foydalanuvchini topish
-        const user = users.find(u => u.username === username);
+        const user = await usersCollection.findOne({ username: username });
 
         if (!user) {
             return res.status(401).json({
@@ -60,11 +51,21 @@ export default async function handler(req, res) {
             });
         }
 
+        // Login logini saqlash
+        const logsCollection = db.collection('loginLogs');
+        await logsCollection.insertOne({
+            userId: user._id,
+            username: user.username,
+            timestamp: new Date(),
+            ip: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'Unknown',
+            userAgent: req.headers['user-agent'] || 'Unknown'
+        });
+
         return res.status(200).json({
             success: true,
             message: 'Muvaffaqiyatli kirdingiz',
             user: {
-                id: user.id,
+                id: user._id,
                 username: user.username,
                 email: user.email
             }

@@ -1,10 +1,22 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const session = require('express-session');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const path = require('path');
-const crypto = require('crypto');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import session from 'express-session';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import path from 'path';
+import crypto from 'crypto';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import dotenv from 'dotenv';
+
+// .env.local faylni yuklash (mongodb.js dan oldin!)
+dotenv.config({ path: '.env.local' });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// MongoDB ni import qilish (dotenv dan keyin!)
+import clientPromise from './lib/mongodb.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
