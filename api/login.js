@@ -1,5 +1,16 @@
 import bcrypt from 'bcryptjs';
-import clientPromise from './_mongodb.js';
+import { MongoClient } from 'mongodb';
+
+// MongoDB connection
+let cachedClient = null;
+async function connectToDatabase() {
+    if (cachedClient) {
+        return cachedClient;
+    }
+    const client = await MongoClient.connect(process.env.MONGODB_URI);
+    cachedClient = client;
+    return client;
+}
 
 export default async function handler(req, res) {
     // CORS
@@ -27,7 +38,7 @@ export default async function handler(req, res) {
         }
 
         // MongoDB ga ulanish
-        const client = await clientPromise;
+        const client = await connectToDatabase();
         const db = client.db('loginSystem');
         const usersCollection = db.collection('users');
 
