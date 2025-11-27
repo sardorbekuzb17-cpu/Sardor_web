@@ -30,22 +30,39 @@ export default async function handler(req, res) {
         // Statistika
         const now = new Date();
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // Mamlakatlar ro'yxati
+        const countries = {};
+        visitors.forEach(v => {
+            const country = v.country || v.location || 'Unknown';
+            countries[country] = (countries[country] || 0) + 1;
+        });
 
         const stats = {
             total: await visitorsCollection.countDocuments({}),
             today: await visitorsCollection.countDocuments({
                 timestamp: { $gte: todayStart }
             }),
-            active: await visitorsCollection.countDocuments({
+            week: await visitorsCollection.countDocuments({
+                timestamp: { $gte: weekStart }
+            }),
+            month: await visitorsCollection.countDocuments({
+                timestamp: { $gte: monthStart }
+            }),
+            online: await visitorsCollection.countDocuments({
                 active: true,
                 lastSeen: { $gte: new Date(Date.now() - 5 * 60 * 1000) } // 5 daqiqa ichida
-            })
+            }),
+            countries: Object.keys(countries).length
         };
 
         return res.status(200).json({
             success: true,
             stats: stats,
-            visitors: visitors
+            visitors: visitors,
+            countries: countries
         });
 
     } catch (error) {

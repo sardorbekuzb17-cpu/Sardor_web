@@ -1,4 +1,14 @@
 {
     "version": 2,
-    "outputDirectory": "."
+    "outputDirectory": ".",
+    "routes": [
+        {
+            "src": "/admin-monitor.html",
+            "dest": "/admin-monitor.html"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/$1"
+        }
+    ]
 }
