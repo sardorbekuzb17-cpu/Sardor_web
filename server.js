@@ -8,13 +8,6 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-// Production da environment variables avtomatik yuklanadi
-// Local development uchun dotenv
-if (process.env.NODE_ENV !== 'production') {
-    const dotenv = await import('dotenv');
-    dotenv.default.config({ path: '.env.local' });
-}
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
