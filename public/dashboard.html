@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Xavfsiz Tizim</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            animation: slideIn 0.8s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-text {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #43e97b;
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <h1>🎉 Dashboard</h1>
+        <p class="welcome-text">Xush kelibsiz, <strong id="username">Foydalanuvchi</strong>!</p>
+
+        <a href="logs.html"
+            style="display: inline-block; margin-bottom: 20px; padding: 12px 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600;">
+            🔒 Kirish Loglarini Ko'rish
+        </a>
+
+        <div class="info-card">
+            <h2>📊 Tizim Ma'lumotlari</h2>
+            <div class="info-item">
+                <span>Status:</span>
+                <span class="status">Aktiv</span>
+            </div>
+            <div class="info-item">
+                <span>Foydalanuvchi ID:</span>
+                <span id="userId">-</span>
+            </div>
+            <div class="info-item">
+                <span>Email:</span>
+                <span id="userEmail">-</span>
+            </div>
+            <div class="info-item">
+                <span>Kirish vaqti:</span>
+                <span id="loginTime">-</span>
+            </div>
+            <div class="info-item">
+                <span>Session:</span>
+                <span id="sessionStatus">Aktiv</span>
+            </div>
+        </div>
+
+        <a href="monitor.html"
+            style="display: inline-block; width: 100%; margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; text-align: center;">
+            🔴 LIVE Monitoring - Jonli Tashrif
+        </a>
+
+        <button class="logout-btn" onclick="logout()">
+            🚪 Tizimdan chiqish
+        </button>
+    </div>
+
+    <script src="tracker.js"></script>
+    <script>
+        // Session tekshirish
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/check-session');
+                const data = await response.json();
+
+                if (!data.authenticated) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                // Foydalanuvchi ma'lumotlarini ko'rsatish
+                document.getElementById('username').textContent = data.user.username;
+                document.getElementById('userId').textContent = data.user.id;
+
+                // Kirish vaqtini ko'rsatish
+                const now = new Date();
+                document.getElementById('loginTime').textContent = now.toLocaleString('uz-UZ');
+
+            } catch (error) {
+                console.error('Session xatosi:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Logout xatosi:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Sahifa yuklanganda
+        window.addEventListener('load', checkSession);
+
+        // Session timeout (30 daqiqa)
+        setTimeout(() => {
+            alert('Session tugadi. Qaytadan kiring.');
+            logout();
+        }, 1800000);
+    </script>
+</body>
+
+</html>

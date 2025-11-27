@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makhmudov Sardor - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Features Section */
+        .features {
+            max-width: 1200px;
+            margin: 100px auto;
+            padding: 0 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            max-width: 1200px;
+            margin: 100px auto;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item h2 {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 100px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #667eea;
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">Makhmudov Sardor</div>
+            <ul class="nav-links">
+                <li><a href="#home">Bosh sahifa</a></li>
+                <li><a href="#about">Men Haqimda</a></li>
+                <li><a href="#quyosh24">☀️ Quyosh24</a></li>
+                <li><a href="monitor.html">📊 Monitoring</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Makhmudov Sardor 👋</h1>
+        <p>Professional Web Developer & Designer</p>
+        <div class="hero-buttons">
+            <a href="#about" class="btn btn-primary">Men Haqimda</a>
+            <a href="#quyosh24" class="btn btn-secondary">☀️ Quyosh24</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="features" id="about" style="margin-top: 50px;">
+        <div
+            style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 60px 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); text-align: center;">
+            <h2 style="font-size: 42px; color: #667eea; margin-bottom: 30px;">👨‍💻 Men Haqimda</h2>
+            <div style="margin-bottom: 40px;"><img src="images/profile.jpg" alt="Makhmudov Sardor"
+                    style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid #667eea; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3); user-select: none; pointer-events: none; -webkit-user-drag: none;"
+                    draggable="false" oncontextmenu="return false;"></div>
+
+            <div style="max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.8; color: #333;">
+                <p style="font-size: 18px; margin-bottom: 20px;">
+                    Salom! Men <strong>Makhmudov Sardor</strong> - professional web developer va dizayner.
+                </p>
+                <p style="font-size: 18px; margin-bottom: 20px;">
+                    🎓 <strong>Ta'lim:</strong> Kompyuter fanlari va dasturlash
+                </p>
+                <p style="font-size: 18px; margin-bottom: 20px;">
+                    💼 <strong>Tajriba:</strong> 5+ yillik web development tajribasi
+                </p>
+                <p style="font-size: 18px; margin-bottom: 20px;">
+                    🛠️ <strong>Texnologiyalar:</strong> HTML, CSS, JavaScript, React, Node.js, Python
+                </p>
+                <p style="font-size: 18px; margin-bottom: 20px;">
+                    🎯 <strong>Maqsad:</strong> Zamonaviy va foydalanuvchilarga qulay web ilovalar yaratish
+                </p>
+                <p style="font-size: 18px; margin-bottom: 20px;">
+                    📧 <strong>Email:</strong> sardorbekuzb17@gmail.com
+                </p>
+                <p style="font-size: 18px; margin-bottom: 20px;">
+                    📞 <strong>Telefon:</strong> <a href="tel:+998200009121"
+                        style="color: #667eea; text-decoration: none; font-weight: bold;">+998 20 000 9121</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quyosh24 Reklama Section -->
+    <section class="features" id="quyosh24" style="margin-top: 50px;">
+        <div
+            style="background: linear-gradient(135deg, #FDB813 0%, #FF6B35 100%); padding: 60px 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(253, 184, 19, 0.4); text-align: center; color: white;">
+            <div style="font-size: 72px; margin-bottom: 20px;">☀️</div>
+            <h2 style="font-size: 48px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Quyosh24</h2>
+            <p style="font-size: 24px; margin-bottom: 30px; opacity: 0.95;">
+                Eng yaxshi quyosh panellari va energiya yechimlari!
+            </p>
+            <div
+                style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 30px; border-radius: 15px; margin: 30px auto; max-width: 600px;">
+                <p style="font-size: 18px; margin-bottom: 15px;">✅ Yuqori sifatli quyosh panellari</p>
+                <p style="font-size: 18px; margin-bottom: 15px;">✅ Professional o'rnatish xizmati</p>
+                <p style="font-size: 18px; margin-bottom: 15px;">✅ 10 yillik kafolat</p>
+                <p style="font-size: 18px; margin-bottom: 15px;">✅ Energiya tejash - 70% gacha</p>
+                <p style="font-size: 18px;">✅ Bepul konsultatsiya</p>
+            </div>
+            <div style="margin-top: 40px;">
+                <a href="#contact"
+                    style="display: inline-block; padding: 20px 50px; background: white; color: #FF6B35; text-decoration: none; border-radius: 50px; font-size: 20px; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    📞 Bog'lanish
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.jahongroup.quyosh24" target="_blank"
+                    style="display: inline-block; margin-left: 20px; padding: 20px 50px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 50px; font-size: 20px; font-weight: bold; border: 2px solid white; transition: all 0.3s ease;"
+                    onmouseover="this.style.background='white'; this.style.color='#FF6B35'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.color='white'">
+                    📥 Google Play dan Yuklab Olish
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💻</div>
+                <h3>Web Development</h3>
+                <p>Zamonaviy va responsive web saytlar yaratish. React, Node.js, va boshqa texnologiyalar.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>UI/UX Design</h3>
+                <p>Chiroyli va foydalanuvchilarga qulay interfeys dizaynlari yaratish.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Xavfsizlik</h3>
+                <p>Yuqori darajadagi xavfsizlik bilan himoyalangan tizimlar yaratish.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Analytics</h3>
+                <p>Real-time monitoring va analytics tizimlari. Saytingizni kuzatib boring.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Tez Ishlash</h3>
+                <p>Optimallashtirilgan va tez yuklanadigan web ilovalar.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Global CDN</h3>
+                <p>Butun dunyoda tez ishlash uchun CDN orqali deploy qilish.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#" title="GitHub">📱</a>
+            <a href="#" title="LinkedIn">💼</a>
+            <a href="#" title="Telegram">✈️</a>
+            <a href="#" title="Email">📧</a>
+        </div>
+        <p>&copy; 2025 Makhmudov Sardor. Barcha huquqlar himoyalangan.</p>
+    </footer>
+
+    <link rel="stylesheet" href="protection-light.css">
+    <script src="protection-light.js"></script>
+    <script src="tracker.js"></script>
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
