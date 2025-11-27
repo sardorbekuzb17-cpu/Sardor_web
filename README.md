@@ -4,17 +4,17 @@
 
 ## 🔗 Sayt Linklari
 
-### 📱 SAYT 1 - Portfolio (Foydalanuvchilar uchun)
-**Link:** https://sardor-web.vercel.app/site1.html
+### 📱 SAYT 1 - Login Tizimi (Foydalanuvchilar uchun)
+**Link:** https://server-liart-theta-11.vercel.app/
 
 Bu saytda:
 - ✅ Login / Kirish
 - ✅ Ro'yxatdan o'tish
-- ✅ Men haqimda (Portfolio)
+- ✅ Dashboard
 - ✅ Quyosh24 reklama
 
 ### 🔐 SAYT 2 - Admin Monitoring (Faqat admin uchun)
-**Link:** https://sardor-web.vercel.app/site2.html
+**Link:** https://server-liart-theta-11.vercel.app/site2.html
 
 Bu saytda:
 - ✅ Kim saytga kirgan
