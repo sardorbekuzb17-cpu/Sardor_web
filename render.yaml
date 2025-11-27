@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: sardor-portfolio
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://sardor_admin:Sardo9050r@cluster0.157rccv.mongodb.net/loginSystem?retryWrites=true&w=majority&appName=Cluster0
+      - key: JWT_SECRET
+        value: kiro-secure-jwt-secret-key-2024-sardor-developer-12345
+      - key: NODE_ENV
+        value: production
