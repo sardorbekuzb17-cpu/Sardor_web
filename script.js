@@ -177,9 +177,10 @@ loginForm.addEventListener('submit', async function (e) {
 
             console.log('Redirecting to main-site.html...');
 
-            // Asosiy saytga o'tish
+            // Dashboard ga o'tish
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
             setTimeout(() => {
-                window.location.href = '/main-site.html';
+                window.location.href = '/dashboard.html';
             }, 500);
         } else {
             // Noto'g'ri login
