@@ -72,7 +72,44 @@
     <link rel="stylesheet" href="protection-light.css">
     <script src="protection-light.js"></script>
     <script src="tracker.js"></script>
-    <script src="login-script.js"></script>
+    <script>
+        // Oddiy login (inline)
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function showError(msg) {
+            errorMessage.textContent = msg;
+        }
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            const validUsers = {
+                'Sardor': 'Sardor_developer',
+                'admin': 'admin123'
+            };
+
+            if (validUsers[username] && validUsers[username] === password) {
+                localStorage.setItem('currentUser', JSON.stringify({ username, id: Date.now() }));
+                window.location.href = '/dashboard.html';
+            } else {
+                showError('Noto\'g\'ri ma\'lumotlar');
+                passwordInput.value = '';
+            }
+        });
+
+        // Parolni ko'rsatish
+        document.getElementById('togglePassword').addEventListener('click', function (e) {
+            e.preventDefault();
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+        });
+    </script>
 </body>
 
 </html>
