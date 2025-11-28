@@ -104,11 +104,23 @@
         });
 
         // Parolni ko'rsatish
-        document.getElementById('togglePassword').addEventListener('click', function (e) {
-            e.preventDefault();
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-        });
+        const toggleBtn = document.getElementById('togglePassword');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+            });
+        }
+
+        // Console tozalashni o'chirish
+        if (window.console && window.console.clear) {
+            const originalClear = console.clear;
+            console.clear = function () {
+                // Console tozalashni bloklash
+            };
+        }
+            });
     </script>
 </body>
 
