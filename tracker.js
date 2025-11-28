@@ -47,29 +47,12 @@
         };
     }
 
-    // Serverga yuborish
+    // Serverga yuborish (o'chirilgan - API ishlamayapti)
     async function trackVisit() {
         try {
             const visitorInfo = getVisitorInfo();
-
-            const response = await fetch('/api/track', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(visitorInfo)
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                console.log('✅ Tashrif qayd qilindi');
-
-                // Session ID ni saqlash
-                if (data.sessionId) {
-                    sessionStorage.setItem('visitorSessionId', data.sessionId);
-                }
-            }
+            console.log('Visitor info:', visitorInfo);
+            // API chaqiruv o'chirilgan
         } catch (error) {
             console.error('Tracking xatosi:', error);
         }
@@ -82,24 +65,6 @@
         trackVisit();
     }
 
-    // Sahifadan chiqishda
-    window.addEventListener('beforeunload', function () {
-        const sessionId = sessionStorage.getItem('visitorSessionId');
-        if (sessionId) {
-            navigator.sendBeacon('/api/track-exit', JSON.stringify({ sessionId }));
-        }
-    });
-
-    // Har 30 soniyada "heartbeat" yuborish (online ekanligini bildirish)
-    setInterval(() => {
-        const sessionId = sessionStorage.getItem('visitorSessionId');
-        if (sessionId) {
-            fetch('/api/heartbeat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sessionId })
-            }).catch(() => { });
-        }
-    }, 30000);
+    // API chaqiruvlar o'chirilgan
 
 })();
